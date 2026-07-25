@@ -45,6 +45,7 @@ exe = EXE(
     pyz,
     a.scripts,
     [],
+    exclude_binaries=True,
     name="PlaylistForge",
     debug=False,
     bootloader_ignore_signals=False,
