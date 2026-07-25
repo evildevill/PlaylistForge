@@ -8,9 +8,9 @@ try:
     from PySide6.QtGui import QColor, QPalette
     from PySide6.QtWidgets import QApplication
 except ImportError:  # pragma: no cover
-    QApplication = object  # type: ignore[assignment]
-    QColor = object  # type: ignore[assignment]
-    QPalette = object  # type: ignore[assignment]
+    QApplication = object  # type: ignore[assignment, misc]
+    QColor = object  # type: ignore[assignment, misc]
+    QPalette = object  # type: ignore[assignment, misc]
 
 
 def apply_theme(app: QApplication, theme: ThemeMode) -> None:

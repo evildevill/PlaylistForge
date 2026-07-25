@@ -6,9 +6,9 @@ try:
     from PySide6.QtGui import QAction, QKeySequence
     from PySide6.QtWidgets import QWidget
 except ImportError:  # pragma: no cover
-    QAction = object  # type: ignore[assignment]
-    QKeySequence = object  # type: ignore[assignment]
-    QWidget = object  # type: ignore[assignment]
+    QAction = object  # type: ignore[assignment, misc]
+    QKeySequence = object  # type: ignore[assignment, misc]
+    QWidget = object  # type: ignore[assignment, misc]
 
 
 def action(parent: QWidget, text: str, shortcut: str | None = None) -> QAction:

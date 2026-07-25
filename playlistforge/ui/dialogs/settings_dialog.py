@@ -8,7 +8,7 @@ from playlistforge.core.models import ApplicationSettings
 try:
     from PySide6.QtWidgets import QComboBox, QDialog, QDialogButtonBox, QFormLayout
 except ImportError:  # pragma: no cover
-    QDialog = object  # type: ignore[assignment]
+    QDialog = object  # type: ignore[assignment, misc]
 
 
 class SettingsDialog(QDialog):

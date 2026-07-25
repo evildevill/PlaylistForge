@@ -6,8 +6,8 @@ try:
     from PySide6.QtCore import Signal
     from PySide6.QtWidgets import QListWidget, QTabWidget, QVBoxLayout, QWidget
 except ImportError:  # pragma: no cover
-    Signal = object  # type: ignore[assignment]
-    QWidget = object  # type: ignore[assignment]
+    Signal = object  # type: ignore[assignment, misc]
+    QWidget = object  # type: ignore[assignment, misc]
 
 
 class HistoryPanel(QWidget):

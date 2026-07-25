@@ -15,8 +15,8 @@ try:
         QWidget,
     )
 except ImportError:  # pragma: no cover
-    Signal = object  # type: ignore[assignment]
-    QGroupBox = object  # type: ignore[assignment]
+    Signal = object  # type: ignore[assignment, misc]
+    QGroupBox = object  # type: ignore[assignment, misc]
 
 
 class CleaningPanel(QGroupBox):

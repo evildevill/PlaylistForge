@@ -5,11 +5,12 @@ from __future__ import annotations
 from playlistforge.core.models import Playlist, Video
 
 try:
-    from PySide6.QtCore import QAbstractTableModel, QModelIndex, Qt
+    from PySide6.QtCore import QAbstractTableModel, QModelIndex, QPersistentModelIndex, Qt
 except ImportError:  # pragma: no cover
-    QAbstractTableModel = object  # type: ignore[assignment]
-    QModelIndex = object  # type: ignore[assignment]
-    Qt = object  # type: ignore[assignment]
+    QAbstractTableModel = object  # type: ignore[assignment, misc]
+    QModelIndex = object  # type: ignore[assignment, misc]
+    QPersistentModelIndex = object  # type: ignore[assignment, misc]
+    Qt = object  # type: ignore[assignment, misc]
 
 
 class VideoTableModel(QAbstractTableModel):
@@ -42,13 +43,17 @@ class VideoTableModel(QAbstractTableModel):
         """Return all model videos."""
         return tuple(self._videos)
 
-    def rowCount(self, parent: QModelIndex | None = None) -> int:  # noqa: N802
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:  # noqa: N802
         return 0 if parent and parent.isValid() else len(self._videos)
 
-    def columnCount(self, parent: QModelIndex | None = None) -> int:  # noqa: N802
+    def columnCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:  # noqa: N802
         return 0 if parent and parent.isValid() else len(self.columns)
 
-    def data(self, index: QModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> object:
+    def data(
+        self,
+        index: QModelIndex | QPersistentModelIndex,
+        role: int = Qt.ItemDataRole.DisplayRole,
+    ) -> object:
         display_roles = (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.ToolTipRole)
         if not index.isValid() or role not in display_roles:
             return None

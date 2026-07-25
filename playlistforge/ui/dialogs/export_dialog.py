@@ -7,8 +7,8 @@ from pathlib import Path
 try:
     from PySide6.QtWidgets import QFileDialog, QWidget
 except ImportError:  # pragma: no cover
-    QFileDialog = object  # type: ignore[assignment]
-    QWidget = object  # type: ignore[assignment]
+    QFileDialog = object  # type: ignore[assignment, misc]
+    QWidget = object  # type: ignore[assignment, misc]
 
 
 def choose_export_path(parent: QWidget, extension: str, directory: Path | None) -> Path | None:

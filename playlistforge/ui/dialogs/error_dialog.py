@@ -7,8 +7,8 @@ from playlistforge.core.errors import PlaylistForgeError
 try:
     from PySide6.QtWidgets import QMessageBox, QWidget
 except ImportError:  # pragma: no cover
-    QMessageBox = object  # type: ignore[assignment]
-    QWidget = object  # type: ignore[assignment]
+    QMessageBox = object  # type: ignore[assignment, misc]
+    QWidget = object  # type: ignore[assignment, misc]
 
 
 def show_error(parent: QWidget, error: BaseException) -> None:

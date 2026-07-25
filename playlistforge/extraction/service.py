@@ -8,8 +8,8 @@ from playlistforge.extraction.worker import ExtractionWorker
 try:
     from PySide6.QtCore import QObject, QThread, Signal
 except ImportError:  # pragma: no cover
-    QObject = object  # type: ignore[assignment]
-    QThread = None  # type: ignore[assignment]
+    QObject = object  # type: ignore[assignment, misc]
+    QThread = None  # type: ignore[assignment, misc]
 
     class Signal:  # type: ignore[no-redef]
         def __init__(self, *args: object) -> None:
@@ -29,7 +29,7 @@ class ExtractionService(QObject):
 
     def __init__(self) -> None:
         super().__init__()
-        self._thread = None
+        self._thread: QThread | None = None
         self._worker: ExtractionWorker | None = None
 
     def start(self, request: ExtractionRequest) -> None:

@@ -5,7 +5,7 @@ from __future__ import annotations
 try:
     from PySide6.QtWidgets import QLabel
 except ImportError:  # pragma: no cover
-    QLabel = object  # type: ignore[assignment]
+    QLabel = object  # type: ignore[assignment, misc]
 
 
 class ThumbnailLabel(QLabel):
