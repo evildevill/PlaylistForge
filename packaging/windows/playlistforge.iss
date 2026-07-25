@@ -3,7 +3,7 @@
 ; Build: iscc packaging\windows\playlistforge.iss
 
 #define MyAppName "PlaylistForge"
-#define MyAppVersion "0.4.0"
+#define MyAppVersion "0.5.0"
 #define MyAppPublisher "PlaylistForge Contributors"
 #define MyAppURL "https://github.com/playlistforge/playlistforge"
 #define MyAppExeName "PlaylistForge.exe"
