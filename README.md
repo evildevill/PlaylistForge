@@ -1,5 +1,11 @@
 # PlaylistForge
 
+![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+![Qt](https://img.shields.io/badge/GUI-PySide6-orange.svg)
+![Platform](https://img.shields.io/badge/Platform-Linux%20|%20Windows%20|%20macOS-success.svg)
+![Status](https://img.shields.io/badge/Status-Active-success)
+
 **Extract • Clean • Transform • Export**
 
 PlaylistForge is a modern desktop utility for extracting YouTube playlist metadata, cleaning video titles, previewing videos, and exporting structured data in formats that work well for documents, spreadsheets, applications, and databases.
