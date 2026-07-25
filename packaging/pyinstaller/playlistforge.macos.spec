@@ -6,8 +6,9 @@ from PyInstaller.utils.hooks import collect_data_files
 
 datas = collect_data_files("playlistforge")
 
+SPEC_DIR = globals().get("SPECPATH", os.getcwd())
 ICON_PATH = os.path.join(
-    os.path.dirname(__file__),
+    SPEC_DIR,
     "..", "icons", "playlistforge.icns",
 )
 if not os.path.isfile(ICON_PATH):
