@@ -209,7 +209,7 @@ jobs:
         run: ls -lhR release-artifacts/
       - name: Upload to GitHub Release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUBI }}
         run: |
           gh release create "${{ github.ref_name }}" \
             --repo "${{ github.repository }}" \
