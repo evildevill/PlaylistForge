@@ -68,6 +68,7 @@ class CleaningRuleType(StrEnum):
     LITERAL_REMOVE = "literal_remove"
     REGEX_REPLACE = "regex_replace"
     COLLAPSE_SPACES = "collapse_spaces"
+    CLEAN_PUNCTUATION = "clean_punctuation"
     TRIM_WHITESPACE = "trim_whitespace"
     REMOVE_YEAR = "remove_year"
 

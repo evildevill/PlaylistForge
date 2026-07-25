@@ -284,6 +284,18 @@ python -m pip install -e ".[dev]"
 
 YouTube may return HTTP 429 when too many requests are made. Wait and try again later.
 
+### yt-dlp warns about a missing JavaScript runtime
+
+Recent yt-dlp versions may warn that no supported JavaScript runtime is installed. PlaylistForge suppresses repeated copies of the same warning, but the first warning is still logged because some YouTube extraction paths may need a runtime.
+
+Install one supported by yt-dlp, such as Deno, then restart PlaylistForge:
+
+```bash
+deno --version
+```
+
+If `deno` is available on `PATH`, yt-dlp can use it automatically.
+
 ### Playlist is private
 
 PlaylistForge cannot extract private playlists unless yt-dlp can access them. Public playlist URLs work best.

@@ -43,6 +43,22 @@ class CollapseSpacesRule(CompiledCleaningRule):
         return re.sub(r"\s+", " ", title)
 
 
+class CleanPunctuationRule(CompiledCleaningRule):
+    """Remove empty brackets and duplicate separators left by earlier rules."""
+
+    def apply(self, title: str) -> str:
+        cleaned = title
+        cleaned = re.sub(r"\b(in|with|for)\s*[\(\[\{]\s*[\)\]\}]", "", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"[\(\[\{]\s*[\)\]\}]", "", cleaned)
+        cleaned = re.sub(r"\s*\|\s*(?:\|\s*)+", " | ", cleaned)
+        cleaned = re.sub(r"(?:^\s*\|\s*)|(?:\s*\|\s*$)", "", cleaned)
+        cleaned = re.sub(r"\s*-\s*(?:-\s*)+", " - ", cleaned)
+        cleaned = re.sub(r"(?:^\s*-\s*)|(?:\s*-\s*$)", "", cleaned)
+        cleaned = re.sub(r"\s+([,.;:!?])", r"\1", cleaned)
+        cleaned = re.sub(r"\s+", " ", cleaned)
+        return cleaned.strip()
+
+
 class TrimWhitespaceRule(CompiledCleaningRule):
     """Trim leading and trailing whitespace."""
 
@@ -66,6 +82,8 @@ def compile_rule(definition: CleaningRule) -> CompiledCleaningRule:
             return RegexReplaceRule(definition)
         case CleaningRuleType.COLLAPSE_SPACES:
             return CollapseSpacesRule(definition)
+        case CleaningRuleType.CLEAN_PUNCTUATION:
+            return CleanPunctuationRule(definition)
         case CleaningRuleType.TRIM_WHITESPACE:
             return TrimWhitespaceRule(definition)
         case CleaningRuleType.REMOVE_YEAR:

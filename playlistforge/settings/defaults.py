@@ -34,6 +34,10 @@ def default_cleaning_rules() -> CleaningRules:
             replacement=" ",
         ),
         CleaningRule(
+            name="Clean empty brackets and separators",
+            rule_type=CleaningRuleType.CLEAN_PUNCTUATION,
+        ),
+        CleaningRule(
             name="Trim whitespace",
             rule_type=CleaningRuleType.TRIM_WHITESPACE,
         ),

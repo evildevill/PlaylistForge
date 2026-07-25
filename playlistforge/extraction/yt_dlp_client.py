@@ -19,6 +19,8 @@ ProgressCallback = Callable[[ExtractionProgress], None]
 class YtDlpLogger:
     """Bridge yt-dlp logger callbacks into Python logging."""
 
+    _seen_warnings: set[str] = set()
+
     def debug(self, message: str) -> None:
         """Log debug/info messages from yt-dlp."""
         LOGGER.debug(message)
@@ -29,6 +31,10 @@ class YtDlpLogger:
 
     def warning(self, message: str) -> None:
         """Log warnings from yt-dlp."""
+        if message in self._seen_warnings:
+            LOGGER.debug("Repeated yt-dlp warning suppressed: %s", message)
+            return
+        self._seen_warnings.add(message)
         LOGGER.warning(message)
 
     def error(self, message: str) -> None:
