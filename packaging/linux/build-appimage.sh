@@ -5,7 +5,7 @@
 set -euo pipefail
 
 APP="PlaylistForge"
-VERSION="0.1.0"
+VERSION="0.3.0"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 BUILD_DIR="${ROOT}/build/appimage"
 
