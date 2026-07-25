@@ -5,7 +5,7 @@
 set -euo pipefail
 
 APP="PlaylistForge"
-VERSION="0.2.0"
+VERSION="0.3.0"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
 echo "==> Building ${APP} v${VERSION} for macOS"

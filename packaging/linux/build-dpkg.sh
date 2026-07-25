@@ -5,7 +5,7 @@
 set -euo pipefail
 
 APP="PlaylistForge"
-VERSION="0.2.0"
+VERSION="0.3.0"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
 BUILD_DIR="${ROOT}/build/dpkg/${APP}-${VERSION}"
