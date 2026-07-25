@@ -113,6 +113,7 @@ chmod 755 "${DESTDIR}/usr/bin/playlistforge"
 chmod 755 "${DESTDIR}/DEBIAN"
 
 echo "==> Building .deb package"
+mkdir -p "${ROOT}/dist"
 dpkg-deb --root-owner-group --build "${DESTDIR}" "${ROOT}/dist/${APP,,}_${VERSION}_all.deb"
 
 echo "==> Done: dist/${APP,,}_${VERSION}_all.deb"
