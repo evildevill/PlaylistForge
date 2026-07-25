@@ -19,16 +19,21 @@ BASE_PNG="${ROOT}/build/icon-base.png"
 mkdir -p "${ICONSET_DIR}"
 
 # Step 1: Convert SVG to high-res PNG using Python + PySide6 (available in CI)
-# PySide6 is always installed in the build env
-python3 -c "
-from PySide6.QtGui import QIcon, QPainter, QImage
-from PySide6.QtCore import QSize, Qt
+# QT_QPA_PLATFORM=offscreen allows Qt to run headlessly (no display required).
+# QGuiApplication must be created before any Qt GUI objects (QImage, QPainter, etc.).
+# QSvgRenderer renders SVG directly to QImage without needing QPixmap.
+QT_QPA_PLATFORM=offscreen python3 -c "
+import sys
+from PySide6.QtGui import QGuiApplication, QPainter, QImage
+from PySide6.QtCore import Qt
+from PySide6.QtSvg import QSvgRenderer
+
+app = QGuiApplication(sys.argv)
+renderer = QSvgRenderer('${ICON_SVG}')
 img = QImage(1024, 1024, QImage.Format.Format_ARGB32_Premultiplied)
 img.fill(Qt.GlobalColor.transparent)
 painter = QPainter(img)
-icon = QIcon('${ICON_SVG}')
-pix = icon.pixmap(QSize(1024, 1024))
-painter.drawPixmap(0, 0, pix)
+renderer.render(painter)
 painter.end()
 img.save('${BASE_PNG}')
 "
