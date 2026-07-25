@@ -5,8 +5,8 @@ from __future__ import annotations
 try:
     from PySide6.QtCore import QSortFilterProxyModel, Qt
 except ImportError:  # pragma: no cover
-    QSortFilterProxyModel = object  # type: ignore[assignment]
-    Qt = object  # type: ignore[assignment]
+    QSortFilterProxyModel = object  # type: ignore[assignment, misc]
+    Qt = object  # type: ignore[assignment, misc]
 
 
 class VideoFilterProxyModel(QSortFilterProxyModel):

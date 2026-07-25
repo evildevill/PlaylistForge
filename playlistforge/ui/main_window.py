@@ -53,9 +53,9 @@ try:
         QWidget,
     )
 except ImportError:  # pragma: no cover
-    QApplication = object  # type: ignore[assignment]
-    QCloseEvent = object  # type: ignore[assignment]
-    QMainWindow = object  # type: ignore[assignment]
+    QApplication = object  # type: ignore[assignment, misc]
+    QCloseEvent = object  # type: ignore[assignment, misc]
+    QMainWindow = object  # type: ignore[assignment, misc]
 
 LOGGER = logging.getLogger(__name__)
 
@@ -323,7 +323,7 @@ class MainWindow(QMainWindow):
         if dialog.exec() != dialog.DialogCode.Accepted:
             return
         self._settings = replace(self._settings, theme=dialog.selected_theme())
-        apply_theme(QApplication.instance(), self._settings.theme)
+        apply_theme(QApplication.instance(), self._settings.theme)  # type: ignore[arg-type]
         self._save_settings()
 
     def _load_url_from_history(self, url: str) -> None:

@@ -7,8 +7,8 @@ try:
     from PySide6.QtGui import QAction
     from PySide6.QtWidgets import QAbstractItemView, QApplication, QMenu, QTableView
 except ImportError:  # pragma: no cover
-    QPoint = object  # type: ignore[assignment]
-    QTableView = object  # type: ignore[assignment]
+    QPoint = object  # type: ignore[assignment, misc]
+    QTableView = object  # type: ignore[assignment, misc]
 
 
 class VideoTable(QTableView):

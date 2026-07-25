@@ -54,3 +54,7 @@ select = ["E", "F", "I", "UP", "B", "SIM", "C4", "ANN"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[[tool.mypy.overrides]]
+module = ["yt_dlp", "openpyxl"]
+ignore_missing_imports = true

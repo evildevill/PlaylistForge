@@ -7,7 +7,7 @@ from playlistforge.core.models import Playlist
 try:
     from PySide6.QtWidgets import QFormLayout, QLabel, QWidget
 except ImportError:  # pragma: no cover
-    QWidget = object  # type: ignore[assignment]
+    QWidget = object  # type: ignore[assignment, misc]
 
 
 class PlaylistSummary(QWidget):

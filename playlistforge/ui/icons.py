@@ -6,9 +6,9 @@ try:
     from PySide6.QtGui import QIcon
     from PySide6.QtWidgets import QApplication, QStyle
 except ImportError:  # pragma: no cover
-    QApplication = object  # type: ignore[assignment]
-    QIcon = object  # type: ignore[assignment]
-    QStyle = object  # type: ignore[assignment]
+    QApplication = object  # type: ignore[assignment, misc]
+    QIcon = object  # type: ignore[assignment, misc]
+    QStyle = object  # type: ignore[assignment, misc]
 
 
 def standard_icon(pixmap: QStyle.StandardPixmap) -> QIcon:

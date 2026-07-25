@@ -5,11 +5,12 @@ from __future__ import annotations
 from playlistforge.core.models import Playlist
 
 try:
-    from PySide6.QtCore import QAbstractListModel, QModelIndex, Qt
+    from PySide6.QtCore import QAbstractListModel, QModelIndex, QPersistentModelIndex, Qt
 except ImportError:  # pragma: no cover
-    QAbstractListModel = object  # type: ignore[assignment]
-    QModelIndex = object  # type: ignore[assignment]
-    Qt = object  # type: ignore[assignment]
+    QAbstractListModel = object  # type: ignore[assignment, misc]
+    QModelIndex = object  # type: ignore[assignment, misc]
+    QPersistentModelIndex = object  # type: ignore[assignment, misc]
+    Qt = object  # type: ignore[assignment, misc]
 
 
 class PlaylistListModel(QAbstractListModel):
@@ -25,10 +26,14 @@ class PlaylistListModel(QAbstractListModel):
         self._playlists = list(playlists)
         self.endResetModel()
 
-    def rowCount(self, parent: QModelIndex | None = None) -> int:  # noqa: N802
+    def rowCount(self, parent: QModelIndex | QPersistentModelIndex | None = None) -> int:  # noqa: N802
         return 0 if parent and parent.isValid() else len(self._playlists)
 
-    def data(self, index: QModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> object:
+    def data(
+        self,
+        index: QModelIndex | QPersistentModelIndex,
+        role: int = Qt.ItemDataRole.DisplayRole,
+    ) -> object:
         if not index.isValid() or role != Qt.ItemDataRole.DisplayRole:
             return None
         playlist = self._playlists[index.row()]

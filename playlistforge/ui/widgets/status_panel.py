@@ -5,7 +5,7 @@ from __future__ import annotations
 try:
     from PySide6.QtWidgets import QLabel, QProgressBar, QVBoxLayout, QWidget
 except ImportError:  # pragma: no cover
-    QWidget = object  # type: ignore[assignment]
+    QWidget = object  # type: ignore[assignment, misc]
 
 
 class StatusPanel(QWidget):

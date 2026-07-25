@@ -5,7 +5,7 @@ from __future__ import annotations
 try:
     from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout
 except ImportError:  # pragma: no cover
-    QDialog = object  # type: ignore[assignment]
+    QDialog = object  # type: ignore[assignment, misc]
 
 
 class ColumnVisibilityDialog(QDialog):
