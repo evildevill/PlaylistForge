@@ -1,0 +1,22 @@
+Package: playlistforge
+Version: 0.1.0
+Section: utils
+Priority: optional
+Architecture: all
+Depends: python3 (>= 3.12), python3-pyside6.qtcore (>= 6.7), python3-pyside6.qtgui (>= 6.7), python3-pyside6.qtwidgets (>= 6.7), yt-dlp (>= 2024.8.6), python3-openpyxl (>= 3.1)
+Recommends: deno (>= 1.0)
+Maintainer: PlaylistForge Contributors
+Description: Extract, clean, transform, and export YouTube playlists
+ PlaylistForge is a modern desktop utility that extracts YouTube
+ playlist information and exports it into multiple structured formats.
+ .
+ Features:
+  * Extract playlist metadata from one or many YouTube URLs
+  * Preview every video in a sortable, searchable table
+  * Clean titles with configurable rules and regex
+  * Export to JSON, CSV, TXT, Markdown, HTML, Excel, and clipboard
+  * Dark mode and light mode themes
+  * History and favorites for quick access
+ .
+ This package installs PlaylistForge as a system application with
+ desktop integration.

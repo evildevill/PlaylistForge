@@ -1,21 +1,34 @@
 # -*- mode: python ; coding: utf-8 -*-
+"""PyInstaller spec for Linux AppImage/onedir build."""
 
 from PyInstaller.utils.hooks import collect_data_files
 
 datas = collect_data_files("playlistforge")
 
 a = Analysis(
-    ["../../playlistforge/app.py"],
-    pathex=[],
+    ["../../playlistforge/__main__.py"],
+    pathex=["../../"],
     binaries=[],
     datas=datas,
-    hiddenimports=["yt_dlp", "openpyxl"],
+    hiddenimports=["yt_dlp", "openpyxl", "playlistforge"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=[
+        "tkinter",
+        "matplotlib",
+        "numpy",
+        "PIL",
+        "cv2",
+        "scipy",
+        "notebook",
+        "jupyter",
+        "IPython",
+        "setuptools",
+        "pip",
+    ],
     noarchive=False,
-    optimize=0,
+    optimize=1,
 )
 pyz = PYZ(a.pure)
 
@@ -38,4 +51,15 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon="../../packaging/icons/playlistforge.svg",
+)
+
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name="PlaylistForge",
 )

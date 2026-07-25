@@ -1,32 +1,52 @@
-# Python
+# Python bytecode
 __pycache__/
 *.py[cod]
 *.pyo
+
+# Virtual environments
+.venv*/
+venv/
+env/
+
+# Build outputs (PyInstaller, dpkg, wheels)
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+*.manifest
+*.spec
+!packaging/pyinstaller/*.spec
+
+# Testing & coverage
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .coverage
+.coverage.*
 htmlcov/
+.tox/
+.nox/
+.hypothesis/
 
-# Virtual environments
-.venv/
-venv/
-env/
-
-# Build outputs
-build/
-dist/
-*.egg-info/
-
-# PyInstaller
-*.spec~
-
-# OS/editor
-.DS_Store
-Thumbs.db
+# IDE / editor
 .idea/
 .vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
 
-# PlaylistForge local artifacts
+# Profiling
+profile*
+
+# PlaylistForge runtime artifacts
 exports/
 logs/
+
+# dpkg staging directory
+**/debian/*/
+
+# PyInstaller AppImage output
+AppDir/

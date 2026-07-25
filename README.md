@@ -103,7 +103,15 @@ playlistforge/
   ui/                        PySide6 windows, widgets, table models, dialogs
 
 tests/                       Unit tests
-packaging/pyinstaller/       PyInstaller spec
+
+packaging/
+  pyinstaller/               Platform-specific PyInstaller specs
+  linux/                     .deb control files, .desktop entry, build scripts
+  windows/                   Inno Setup installer script, build batch
+  macos/                     DMG build script
+  icons/                     SVG icon source
+  build-all.sh               Cross-platform build helper
+  release.sh                 Version bump and tag helper
 ```
 
 ## Run Locally
@@ -221,33 +229,145 @@ Run mypy:
 mypy playlistforge
 ```
 
-## Building Executables
+## Packaging
 
-Install development dependencies first:
+PlaylistForge can be packaged as native installers for Linux, Windows, and macOS. Each installer must be **built on its target OS** — PyInstaller does not reliably cross-compile Qt desktop apps.
 
-```bash
-python -m pip install -e ".[dev]"
-```
-
-Linux:
+### Quick Build (Current Platform)
 
 ```bash
-pyinstaller packaging/pyinstaller/playlistforge.spec --clean --noconfirm
+bash packaging/build-all.sh
 ```
 
-Windows PowerShell:
+This auto-detects your OS and runs the correct platform build script.
+
+### Linux
+
+Two distribution methods are supported.
+
+**Method A — Native .deb package (Debian/Ubuntu)**
+
+Installs PlaylistForge as a system Python package with desktop integration:
+
+```bash
+bash packaging/linux/build-dpkg.sh
+```
+
+Output: `dist/playlistforge_0.1.0_all.deb`
+
+Install the `.deb`:
+
+```bash
+sudo dpkg -i dist/playlistforge_0.1.0_all.deb
+sudo apt-get install -f   # install runtime dependencies
+playlistforge
+```
+
+**Method B — Standalone AppImage**
+
+Bundles everything into a single portable executable:
+
+```bash
+bash packaging/linux/build-appimage.sh
+```
+
+Output: `PlaylistForge-x86_64.AppImage`
+
+```bash
+chmod +x PlaylistForge-x86_64.AppImage
+./PlaylistForge-x86_64.AppImage
+```
+
+Requires `linuxdeploy` or `appimagetool` on `PATH`. Install from https://github.com/linuxdeploy/linuxdeploy.
+
+### Windows
 
 ```powershell
-pyinstaller packaging\pyinstaller\playlistforge.spec --clean --noconfirm
+# From project root
+pyinstaller packaging\pyinstaller\playlistforge.windows.spec --clean --noconfirm
+
+# Build installer with Inno Setup (requires Inno Setup 6)
+iscc packaging\windows\playlistforge.iss
 ```
 
-macOS:
+Or use the batch script:
+
+```cmd
+packaging\windows\build.bat
+```
+
+Output:
+- `dist\PlaylistForge\` — portable directory
+- `dist\PlaylistForge-Setup-0.1.0.exe` — installer
+
+The installer is built with [Inno Setup](https://jrsoftware.org/isinfo.php). Download and install it, then `iscc` will be available on `PATH`.
+
+### macOS
 
 ```bash
-pyinstaller packaging/pyinstaller/playlistforge.spec --clean --noconfirm
+bash packaging/macos/build-dmg.sh
 ```
 
-Build artifacts are written to `dist/`.
+Output:
+- `dist/PlaylistForge.app` — portable application bundle
+- `dist/PlaylistForge-0.1.0.dmg` — disk image for distribution
+
+For production releases, set these environment variables before building:
+
+```bash
+export APPLE_SIGN_IDENTITY="Developer ID Application: Your Name"
+export APPLE_ID="your@apple.id"
+export APPLE_TEAM_ID="TEAM123456"
+export APPLE_APP_PASSWORD="xxxx-xxxx-xxxx-xxxx"
+```
+
+This enables codesigning and Apple notarization.
+
+### GitHub Actions (Automated Builds)
+
+When you push a tag matching `v*`, the CI workflow in `.github/workflows/ci.yml` automatically:
+
+1. Runs linting and tests on all three OS runners.
+2. Builds the Linux AppImage, Windows installer, and macOS DMG.
+3. Creates a GitHub Release with all artifacts attached.
+
+Create and push a release tag:
+
+```bash
+bash packaging/release.sh 0.2.0
+git push origin main --follow-tags
+```
+
+The release script updates version numbers across all spec files, build scripts, and the package metadata, then tags the commit.
+
+### Manual Release Checklist
+
+```bash
+# 1. Update version
+bash packaging/release.sh 0.2.0
+
+# 2. Verify everything
+ruff check .
+pytest -q
+python -m compileall -q playlistforge tests
+mypy playlistforge
+
+# 3. Push tag — GitHub Actions builds it
+git push origin main --follow-tags
+```
+
+### Build Artifacts Summary
+
+| Platform | Format | File |
+|----------|--------|------|
+| Linux | .deb | `playlistforge_0.1.0_all.deb` |
+| Linux | AppImage | `PlaylistForge-x86_64.AppImage` |
+| Windows | Portable | `dist/PlaylistForge/` |
+| Windows | Installer | `PlaylistForge-Setup-0.1.0.exe` |
+| macOS | Bundle | `PlaylistForge.app` |
+| macOS | DMG | `PlaylistForge-0.1.0.dmg` |
+
+All artifacts go to `dist/`.
 
 ## Architecture Notes
 

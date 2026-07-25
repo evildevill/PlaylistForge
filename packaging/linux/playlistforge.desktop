@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=PlaylistForge
+GenericName=YouTube Playlist Extractor
+Comment=Extract, clean, transform, and export YouTube playlists
+Exec=playlistforge
+Icon=playlistforge
+Categories=Utility;AudioVideo;Qt;
+Terminal=false
+StartupNotify=true
+StartupWMClass=PlaylistForge
+Keywords=youtube;playlist;export;desktop;extractor
+MimeType=text/uri-list;
