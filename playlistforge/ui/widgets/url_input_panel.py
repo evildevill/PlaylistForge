@@ -14,16 +14,23 @@ class UrlInputPanel(QWidget):
     """Large URL input area with primary extraction controls."""
 
     extract_requested = Signal(str)
+    batch_requested = Signal(str)
     paste_requested = Signal()
     cancel_requested = Signal()
 
     def __init__(self) -> None:
         super().__init__()
         self.url_input = QPlainTextEdit()
-        self.url_input.setPlaceholderText("Paste one or many YouTube playlist URLs...")
+        self.url_input.setPlaceholderText(
+            "Paste playlist URLs, or batch lines like: CS101 | https://youtube.com/playlist?list=..."
+        )
         self.url_input.setMinimumHeight(92)
         self.paste_button = QPushButton("Paste")
         self.extract_button = QPushButton("Extract")
+        self.batch_button = QPushButton("Batch → JSON")
+        self.batch_button.setToolTip(
+            "Process each playlist separately and save a JSON checkpoint immediately."
+        )
         self.cancel_button = QPushButton("Cancel")
         self.cancel_button.setEnabled(False)
 
@@ -31,6 +38,7 @@ class UrlInputPanel(QWidget):
         buttons.addStretch(1)
         buttons.addWidget(self.paste_button)
         buttons.addWidget(self.extract_button)
+        buttons.addWidget(self.batch_button)
         buttons.addWidget(self.cancel_button)
 
         layout = QVBoxLayout(self)
@@ -41,9 +49,13 @@ class UrlInputPanel(QWidget):
         self.extract_button.clicked.connect(
             lambda: self.extract_requested.emit(self.url_input.toPlainText())
         )
+        self.batch_button.clicked.connect(
+            lambda: self.batch_requested.emit(self.url_input.toPlainText())
+        )
         self.cancel_button.clicked.connect(self.cancel_requested.emit)
 
     def set_busy(self, busy: bool) -> None:
         """Toggle busy UI state."""
         self.extract_button.setEnabled(not busy)
+        self.batch_button.setEnabled(not busy)
         self.cancel_button.setEnabled(busy)
