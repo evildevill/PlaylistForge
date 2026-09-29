@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import logging
 from dataclasses import replace
+from pathlib import Path
 
 from playlistforge.cleaning.engine import CleaningEngine
 from playlistforge.cleaning.history import CleaningHistory
+from playlistforge.core.batch import BatchPlaylistInput, parse_batch_input, write_batch_json
 from playlistforge.core.enums import ClipboardFormat, ExportFormat
 from playlistforge.core.models import (
     ApplicationSettings,
@@ -42,6 +44,7 @@ try:
     from PySide6.QtGui import QAction, QCloseEvent, QKeySequence
     from PySide6.QtWidgets import (
         QApplication,
+        QFileDialog,
         QLabel,
         QLineEdit,
         QMainWindow,
@@ -94,6 +97,11 @@ class MainWindow(QMainWindow):
         self._cleaning_history = CleaningHistory()
         self._exporters = default_exporter_registry()
         self._extraction = ExtractionService()
+        self._batch_queue: list[BatchPlaylistInput] = []
+        self._batch_current: BatchPlaylistInput | None = None
+        self._batch_destination: Path | None = None
+        self._batch_completed = 0
+        self._batch_failed: list[str] = []
 
         self.setWindowTitle("PlaylistForge")
         self.resize(settings.window_width, settings.window_height)
@@ -168,6 +176,7 @@ class MainWindow(QMainWindow):
 
     def _connect(self) -> None:
         self.url_panel.extract_requested.connect(self._extract)
+        self.url_panel.batch_requested.connect(self._start_batch)
         self.url_panel.paste_requested.connect(self._paste)
         self.url_panel.cancel_requested.connect(self._extraction.cancel)
         self.history_panel.url_selected.connect(self._load_url_from_history)
@@ -199,10 +208,89 @@ class MainWindow(QMainWindow):
         self.status_panel.set_status("Starting extraction...", 0)
         self._extraction.start(ExtractionRequest(urls=urls))
 
+    def _start_batch(self, text: str) -> None:
+        """Start sequential, crash-safe batch extraction."""
+        items = parse_batch_input(text)
+        if not items:
+            QMessageBox.warning(
+                self,
+                "PlaylistForge",
+                "Add at least one batch line, for example:\nCS101 | https://youtube.com/playlist?list=...",
+            )
+            return
+        directory = QFileDialog.getExistingDirectory(
+            self,
+            "Choose folder for batch JSON files",
+            str(self._settings.last_export_directory or Path.home()),
+        )
+        if not directory:
+            return
+        self._batch_queue = list(items)
+        self._batch_current = None
+        self._batch_destination = Path(directory)
+        self._batch_completed = 0
+        self._batch_failed = []
+        self.url_panel.set_busy(True)
+        self._start_next_batch_item()
+
+    def _start_next_batch_item(self) -> None:
+        """Extract the next queued playlist, or finish the batch."""
+        if not self._batch_queue:
+            failed = len(self._batch_failed)
+            message = f"Batch complete: {self._batch_completed} saved"
+            if failed:
+                message += f", {failed} failed"
+            self.url_panel.set_busy(False)
+            self.status_panel.set_status(message + ".", 100)
+            if self._batch_destination is not None:
+                self._settings = replace(
+                    self._settings,
+                    last_export_directory=self._batch_destination,
+                )
+                self._save_settings()
+            self._batch_current = None
+            self._batch_destination = None
+            return
+
+        self._batch_current = self._batch_queue.pop(0)
+        done = self._batch_completed + len(self._batch_failed)
+        total = done + len(self._batch_queue) + 1
+        label = self._batch_current.course_code or self._batch_current.output_stem
+        self.status_panel.set_status(
+            f"Batch {done + 1}/{total}: extracting {label}...",
+            int((done / total) * 100),
+        )
+        self._extraction.start(ExtractionRequest(urls=(self._batch_current.url,)))
+
     def _on_progress(self, progress: ExtractionProgress) -> None:
         self.status_panel.set_status(progress.message, progress.percent)
 
     def _on_extraction_finished(self, result: ExtractionResult) -> None:
+        if self._batch_current is not None and self._batch_destination is not None:
+            playlist = result.playlists[0]
+            try:
+                path = write_batch_json(
+                    self._batch_current,
+                    playlist,
+                    self._batch_destination,
+                    pretty=self.export_panel.pretty_json.isChecked(),
+                )
+            except Exception as exc:
+                LOGGER.exception("Batch checkpoint write failed")
+                self._batch_failed.append(
+                    f"{self._batch_current.course_code or self._batch_current.url}: {exc}"
+                )
+            else:
+                self._batch_completed += 1
+                self._playlists = (*self._playlists, playlist)
+                self._settings = add_recent_playlist(self._settings, playlist.webpage_url)
+                self._save_settings()
+                self._update_playlist_views()
+                LOGGER.info("Batch checkpoint saved to %s", path)
+            self._batch_current = None
+            self._start_next_batch_item()
+            return
+
         self.url_panel.set_busy(False)
         self._playlists = result.playlists
         self._update_playlist_views()
@@ -212,13 +300,23 @@ class MainWindow(QMainWindow):
         self.status_panel.set_status(f"Loaded {len(result.playlists)} playlist(s).", 100)
 
     def _on_extraction_failed(self, error: BaseException) -> None:
+        if self._batch_current is not None:
+            label = self._batch_current.course_code or self._batch_current.url
+            self._batch_failed.append(f"{label}: {error}")
+            LOGGER.warning("Batch item failed: %s", label)
+            self._batch_current = None
+            self._start_next_batch_item()
+            return
         self.url_panel.set_busy(False)
         self.status_panel.set_status("Extraction failed.", 0)
         show_error(self, error)
 
     def _on_extraction_cancelled(self) -> None:
+        self._batch_queue.clear()
+        self._batch_current = None
+        self._batch_destination = None
         self.url_panel.set_busy(False)
-        self.status_panel.set_status("Extraction cancelled.", 0)
+        self.status_panel.set_status("Extraction cancelled. Completed batch JSON files were kept.", 0)
 
     def _update_playlist_views(self) -> None:
         self.video_model.set_playlists(self._playlists)

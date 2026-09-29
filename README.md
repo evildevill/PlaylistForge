@@ -169,6 +169,26 @@ https://www.youtube.com/playlist?list=PLxxxxxxxxxxxx
 https://www.youtube.com/watch?v=VIDEO_ID&list=PLxxxxxxxxxxxx
 ```
 
+## Batch Processing
+
+For course libraries or other multi-playlist jobs, put one playlist on each line and click **Batch → JSON**.
+
+```text
+CS101 | https://www.youtube.com/playlist?list=PLxxxxxxxxxxxx
+MTH101 | https://www.youtube.com/playlist?list=PLyyyyyyyyyyyy
+https://www.youtube.com/playlist?list=PLzzzzzzzzzzzz
+```
+
+Choose an output folder once. PlaylistForge then processes the queue sequentially and writes each successful playlist immediately:
+
+```text
+CS101.json
+MTH101.json
+PLzzzzzzzzzzzz.json
+```
+
+Each checkpoint contains the optional `courseCode`, playlist metadata, and the extracted video rows. Writes are atomic, so completed files survive cancellation, later playlist failures, or an application crash. A failed playlist is recorded by the running batch and the remaining playlists continue processing.
+
 ## Exported JSON
 
 The JSON exporter creates app/database-friendly camelCase keys:
